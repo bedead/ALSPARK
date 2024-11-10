@@ -1,0 +1,7 @@
+gradio
+pillow
+requests
+transformers
+torch
+diffusers
+accelerate

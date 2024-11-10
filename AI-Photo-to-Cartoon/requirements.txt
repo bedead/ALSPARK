@@ -1,0 +1,10 @@
+diffusers
+torch
+pillow
+flask
+tempfile
+transformers
+accelerate
+opencv-python
+opencv-python-headless
+opencv-contrib-python

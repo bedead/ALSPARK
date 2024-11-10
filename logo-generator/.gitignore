@@ -1,0 +1,5 @@
+.lightning_studio
+.idea
+.vscode
+backend/venv
+my-react-app/node_modules

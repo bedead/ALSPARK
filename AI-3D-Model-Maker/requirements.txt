@@ -1,0 +1,8 @@
+diffusers
+transformers
+accelerate
+trimesh
+gradio
+flask
+trimesh
+numpy
