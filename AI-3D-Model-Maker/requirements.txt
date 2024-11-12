@@ -1,4 +1,3 @@
-diffusers
 transformers
 accelerate
 trimesh
@@ -6,3 +5,12 @@ gradio
 flask
 trimesh
 numpy
+Pillow
+rembg
+# omegac
+# onf
+# einops
+imageio[ffmpeg]
+moderngl
+xatlas
+git+https://github.com/tatsy/torchmcubes.git

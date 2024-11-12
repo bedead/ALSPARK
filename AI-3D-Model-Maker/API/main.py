@@ -1,35 +1,34 @@
-from flask import Flask, request, send_file
-import tempfile
-import trimesh
-import numpy as np
+# main.py
+import os
+from flask import Flask, request, jsonify
+from model import preprocess_image, generate_3d_models, initialize_model
 from PIL import Image
-from model import initialize_model, gen_model  # Import initialize_model to load the model on startup
+import tempfile
 
 app = Flask(__name__)
-
 model = initialize_model()
 
-def to_glb(ply_path: str) -> str:
-    mesh = trimesh.load(ply_path)
-    rot = trimesh.transformations.rotation_matrix(-np.pi / 2, [1, 0, 0])
-    mesh = mesh.apply_transform(rot)
-    rot = trimesh.transformations.rotation_matrix(np.pi, [0, 1, 0])
-    mesh = mesh.apply_transform(rot)
-    mesh_path = tempfile.NamedTemporaryFile(suffix=".glb", delete=False)
-    mesh.export(mesh_path.name, file_type="glb")
-    return mesh_path.name
 
-@app.route("/gen_model", methods=["POST"])
+@app.route("/generate_model", methods=["POST"])
 def generate_model():
-    prompt = request.form.get("prompt")
+    if "image" not in request.files or "remove_background" not in request.form:
+        return jsonify({"error": "Image file and remove_background flag required"}), 400
 
-    if not prompt:
-        return {"error": "Prompt is required"}, 400
+    image_file = request.files["image"]
+    remove_background = request.form["rm_bg"].lower() == "true"
+    foreground_ratio = float(request.form.get("foreground_ratio", 0.85))
+    mc_resolution = int(request.form.get("mc_resolution", 256))
 
-    ply_path = gen_model(prompt=prompt, model=model)
-    tmp_path = to_glb(ply_path=ply_path)
+    input_image = Image.open(image_file)
 
-    return send_file(tmp_path, mimetype="model/gltf-binary", as_attachment=True)
+    processed_image = preprocess_image(input_image, remove_background, foreground_ratio)
+
+    obj_file_path, glb_file_path = generate_3d_models(
+        processed_image, mc_resolution, model
+    )
+
+    return jsonify({"obj_model": obj_file_path, "glb_model": glb_file_path})
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
