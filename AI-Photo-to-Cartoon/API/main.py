@@ -17,9 +17,13 @@ upscaler_model = initialize_upscaler()
 @app.route("/photo_to_cartoon", methods=["POST"])
 def generate_image():
     image = request.files.get("image")
+    user_prompt = request.form["prompt"]
 
     if not image:
         return {"error": "Input Image are required"}, 400
+
+    if user_prompt != None:
+        pass
 
     image = Image.open(image)
 

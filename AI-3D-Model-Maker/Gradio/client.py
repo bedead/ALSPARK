@@ -1,27 +1,47 @@
 import gradio as gr
 import requests
 import tempfile
+from io import BytesIO
 
 API_URL = "http://127.0.0.1:5000/generate_model"
 
 
 def gen_model(input_image, remove_background):
     if not input_image:
-        return gr.Error("Error: Please provide an prompt!")
+        return gr.Error("Error: Please provide an image!")
 
-    files = {"image": (input_image.filename, input_image)}
+    buffered = BytesIO()
+    input_image.save(buffered, format="PNG")
+    img_data = buffered.getvalue()
+
+    files = {"image": ("image.png", img_data)}
     data = {"rm_bg": remove_background, "foreground_ratio": 0.85, "mc_resolution": 256}
 
     response = requests.post(API_URL, files=files, data=data)
 
     if response.status_code == 200:
-        with tempfile.NamedTemporaryFile(suffix=".glb", delete=False) as glb_file:
-            glb_file.write(response.content["glb_model"])
-            glb_file_path = glb_file.name
+        response_data = response.json()
 
-        with tempfile.NamedTemporaryFile(suffix=".obj", delete=False) as obj_file:
-            obj_file.write(response.content["obj_model"])
-            obj_file_path = obj_file.name
+        obj_file_path, glb_file_path = None, None
+
+        # Download and save the obj model
+        obj_model_url = response_data["models"][0]["url"]
+        obj_response = requests.get(obj_model_url)
+        if obj_response.status_code == 200:
+            with tempfile.NamedTemporaryFile(suffix=".obj", delete=False) as obj_file:
+                obj_file.write(obj_response.content)
+                obj_file_path = obj_file.name
+
+        # Download and save the glb model
+        glb_model_url = response_data["models"][1]["url"]
+        glb_response = requests.get(glb_model_url)
+        if glb_response.status_code == 200:
+            with tempfile.NamedTemporaryFile(suffix=".glb", delete=False) as glb_file:
+                glb_file.write(glb_response.content)
+                glb_file_path = glb_file.name
+
+        print("OBJ file saved at:", obj_file_path)
+        print("GLB file saved at:", glb_file_path)
 
         return obj_file_path, glb_file_path
     else:

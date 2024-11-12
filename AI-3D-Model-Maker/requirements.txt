@@ -9,7 +9,7 @@ Pillow
 rembg
 # omegac
 # onf
-# einops
+einops
 imageio[ffmpeg]
 moderngl
 xatlas
