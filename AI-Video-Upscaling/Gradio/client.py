@@ -2,12 +2,12 @@ import gradio as gr
 import requests
 
 
-def upscale_video(video, scaler_type, face_enhancer):
+def upscale_video(video, scaler_type, face_enhancer: bool):
     # Map the user-friendly scaler names to the actual model names
     scaler_mapping = {
-        "Upscaler 4x": "RealESRGAN_x4plus",
-        "Cartoon/Anime Upscaler": "realesr-animevideov3",
-        "Upscaler 2x": "RealESRGAN_x2plus",
+        "Fast Upscaler": "realesr-animevideov3",
+        "High Quality Upscaler": "RealESRGAN_x2plus",
+        "Best Quality Upscaler": "RealESRGAN_x4plus",
     }
 
     selected_model = scaler_mapping[scaler_type]
@@ -35,9 +35,11 @@ gr.Interface(
     inputs=[
         gr.Video(label="Upload MP4 Video"),
         gr.Dropdown(
-            ["Upscaler 2x", "Cartoon/Anime Upscaler", "Upscaler 4x"], label="Select Upscaler"
+            ["Fast Upscaler", "High Quality Upscaler", "Best Quality Upscaler"],
+            label="Select Upscaler",
+            value="Fast Upscaler",
         ),
-        gr.Checkbox(label="Enable Face Enhancer (Optional)"),
+        gr.Checkbox(label="Enable Face Enhancer (Optional)", value=False),
     ],
     outputs=gr.Video(label="Upscaled Video"),
     title="AI Video Upscaler",

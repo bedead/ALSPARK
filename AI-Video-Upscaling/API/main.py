@@ -15,14 +15,8 @@ def upscale_video():
         return {"error": "No video file provided."}, 400
 
     video_file = request.files["video"]
-    model_name = request.form.get("model")
-    do_face_enhance = bool(request.form.get("face_enhancer"))
-
-    if model_name == None:
-        model_name = "RealESRGAN_x2plus"
-
-    print(f"Selected Model : {model_name}")
-    print(f"Do Face enhance? : {do_face_enhance}")
+    model_name = request.form.get("model", "realesr-animevideov3")
+    do_face_enhance = bool(request.form.get("face_enhancer", False))
 
     mime_type, _ = mimetypes.guess_type(video_file.filename)
     # print(mime_type)

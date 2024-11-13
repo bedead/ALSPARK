@@ -127,9 +127,9 @@ class RealESRGANProcessor:
         self,
         model_name,
         device,
+        face_enhance,
         outscale=2,
         denoise_strength=0.5,
-        face_enhance=False,
         tile=0,
         tile_pad=5,
         pre_pad=0,
@@ -148,6 +148,9 @@ class RealESRGANProcessor:
         # Initialize the model
         self.model, self.netscale, self.file_url = self._get_model_details()
         self.upsampler = self._initialize_upsampler()
+
+        print(f"Model Name : {self.model_name}")
+        print(f"Face enhance : {'Yes' if self.face_enhance == True else 'No'}")
 
         if face_enhance:
             self.face_enhancer = self._initialize_face_enhancer()
