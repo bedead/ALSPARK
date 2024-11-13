@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, url_for, jsonify, send_file
 from model import preprocess_image, generate_3d_models, initialize_model
 from PIL import Image
+import time
 
 app = Flask(__name__)
 
@@ -21,11 +22,15 @@ def generate_model():
 
     input_image = Image.open(image_file)
 
+    start_time = time.time()
     processed_image = preprocess_image(input_image, remove_background, foreground_ratio)
 
     obj_file_path, glb_file_path = generate_3d_models(
         processed_image, mc_resolution, model
     )
+
+    total_time = time.time() - start_time
+    print(f"Total processing time: {total_time:.2f} seconds")
 
     obj_file_url = url_for("static", filename=f"models/model.obj", _external=True)
     glb_file_url = url_for("static", filename=f"models/model.glb", _external=True)

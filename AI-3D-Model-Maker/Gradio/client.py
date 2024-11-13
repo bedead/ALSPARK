@@ -40,8 +40,8 @@ def gen_model(input_image, remove_background):
                 glb_file.write(glb_response.content)
                 glb_file_path = glb_file.name
 
-        print("OBJ file saved at:", obj_file_path)
-        print("GLB file saved at:", glb_file_path)
+        # print("OBJ file saved at:", obj_file_path)
+        # print("GLB file saved at:", glb_file_path)
 
         return obj_file_path, glb_file_path
     else:

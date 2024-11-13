@@ -42,7 +42,7 @@ def initialize_model():
         config_name="config.yaml",
         weight_name="model.ckpt",
     )
-    model.renderer.set_chunk_size(131072)
+    model.renderer.set_chunk_size(8192)
     model.to(device)
 
     # if device == "cuda":
@@ -81,6 +81,9 @@ def generate_3d_models(image, mc_resolution, model):
     mesh.apply_scale([-1, 1, 1])
     mesh.export(obj_filename)
     mesh.export(glb_filename)
+
+    if device == 'cuda':
+        torch.cuda.is_available()
 
     # with tempfile.NamedTemporaryFile(suffix=".obj", delete=False) as obj_file:
     #     mesh.apply_scale([-1, 1, 1])
