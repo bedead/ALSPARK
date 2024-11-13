@@ -1,2 +1,4 @@
-look for better model, specific for realistic images
-513307103
+look for better model, specific for realistic images - > done
+seed otimization if possible, some high number - > will do
+adding optinal user promopt - > doing
+prompt context similarity check and furthur process - > will do

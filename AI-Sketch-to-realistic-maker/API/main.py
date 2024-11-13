@@ -16,6 +16,7 @@ blip_processor, blip_model = initialize_blip()
 @app.route("/generate", methods=["POST"])
 def generate_image():
     sketch = request.files.get("sketch")
+    user_prompt = request.form.get("prompt", None)
 
     if not sketch:
         return {"error": "Sketch is required"}, 400
