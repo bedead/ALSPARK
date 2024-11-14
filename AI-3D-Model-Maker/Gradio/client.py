@@ -67,8 +67,8 @@ with gr.Blocks() as demo:
                 label="Does image has background?", value=False
             )
             with gr.Row():
-                generate_btn = gr.Button("Generate 3D Model")
-                clear_btn = gr.Button("Clear")
+                generate_btn = gr.Button("Generate 3D Model", variant="primary")
+                clear_btn = gr.Button("Clear", variant="secondary")
         with gr.Column():
             with gr.Tab("OBJ"):
                 output_model_obj = gr.Model3D(

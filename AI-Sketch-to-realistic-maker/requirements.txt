@@ -5,3 +5,4 @@ transformers
 torch
 diffusers
 accelerate
+sentence_transformers

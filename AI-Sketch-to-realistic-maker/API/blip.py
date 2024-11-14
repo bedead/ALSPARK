@@ -15,7 +15,7 @@ def initialize_blip():
     return processor, model
 
 
-def get_prompt(original_image: Image.Image, processor, model) -> str:
+def get_blip_prompt(original_image: Image.Image, processor, model) -> str:
     inputs = processor(
         images=original_image, text="a photo of ", return_tensors="pt"
     ).to(device, torch.float16 if device == "cuda" else torch.float32)

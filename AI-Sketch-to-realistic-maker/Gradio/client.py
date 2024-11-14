@@ -2,6 +2,7 @@ import gradio as gr
 import requests
 from PIL import Image
 from io import BytesIO
+import numpy as np
 
 API_URL = "http://127.0.0.1:5000/generate"
 
@@ -9,6 +10,9 @@ API_URL = "http://127.0.0.1:5000/generate"
 def generate_realistic_image(image, prompt):
     if image is None:
         return gr.Error("Either upload an image or draw.")
+
+    if isinstance(image, np.ndarray):
+        image = Image.fromarray(image)
 
     buffered = BytesIO()
     image.save(buffered, format="PNG")
@@ -46,15 +50,19 @@ with gr.Blocks() as demo:
     with gr.Row(variant="panel", equal_height=True):
         with gr.Column(scale=6):
             im = gr.ImageEditor(
-                type="numpy",
+                type="pil",
                 label="Edit Image",
+                image_mode="RGBA",
                 # canvas_size=(900, 500),
                 # crop_size="16:9",
+                # format="png",
                 height=700,
             )
 
         with gr.Column(scale=4):
             im_preview = gr.Image(interactive=False, label="Preview")
+            im.change(predict, inputs=im, outputs=im_preview, show_progress="hidden")
+
             # with gr.Row():
             prompt = gr.Textbox(
                 label="Optional Prompt",
@@ -78,6 +86,5 @@ with gr.Blocks() as demo:
         outputs=[im, im_preview, prompt, output_image],
     )
 
-    im.change(predict, inputs=im, outputs=im_preview, show_progress="hidden")
 
 demo.launch(share=True)

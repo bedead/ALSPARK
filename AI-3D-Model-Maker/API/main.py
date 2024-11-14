@@ -20,6 +20,8 @@ def generate_model():
     foreground_ratio = float(request.form.get("foreground_ratio", 0.85))
     mc_resolution = int(request.form.get("mc_resolution", 256))
 
+    print(f"Background : {remove_background}")
+
     input_image = Image.open(image_file)
 
     start_time = time.time()

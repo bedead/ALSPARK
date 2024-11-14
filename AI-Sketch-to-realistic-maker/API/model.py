@@ -9,17 +9,20 @@ from diffusers.pipelines.stable_diffusion.safety_checker import (
     StableDiffusionSafetyChecker,
 )
 
+from diffusers.models.autoencoders.autoencoder_tiny import AutoencoderTiny
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model_id = "emilianJR/epiCRealism"
+model_id = "SG161222/Realistic_Vision_V6.0_B1_noVAE"
 
 torch.set_grad_enabled(False)
 if device == "cuda":
     torch.backends.cuda.matmul.allow_tf32 = True
 
 fixed_negative_prompt = """
-(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, geometric shape, geometric), text, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
+deformed iris, deformed pupils, semi-realistic, cartoon, cgi, render, illustration, painting, drawing, geometric, text, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
 """
+
 
 def initialize_model():
     pipe = AutoPipelineForImage2Image.from_pretrained(
@@ -30,6 +33,11 @@ def initialize_model():
         #     "CompVis/stable-diffusion-safety-checker"
         # ),
         # safety_checker=None,
+    ).to(device)
+    pipe.vae = AutoencoderTiny.from_pretrained(
+        "sayakpaul/taesd-diffusers",
+        torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+        use_safetensors=True,
     ).to(device)
 
     if device == "cuda":
@@ -43,11 +51,13 @@ def initialize_model():
 def sketch_to_realistic(
     sketch_image: Image.Image, prompt: str, model, seed: int = None
 ) -> Image.Image:
-    seed = seed if seed is not None else random.randint(0, 2**32 - 1)
+    seed = seed if seed is not None else random.randint(4000000001, 2**32 - 1)
     # seed = 513307103
     print(f"Using seed: {seed}")  # Print the seed for reference
 
-    prompt = f"Raw photo, {prompt}, photo-realistic, 8k uhd, dslr, soft lighting, high quality"
+    prompt = (
+        f"Raw photo, {prompt}, photo-realistic photo, natural lighting, high quality"
+    )
     print(f"Prompt : {prompt}")
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -58,7 +68,7 @@ def sketch_to_realistic(
             strength=0.6,
             negative_prompt=fixed_negative_prompt,
             generator=generator,
-            # num_inference_steps=30,
+            num_inference_steps=15,
         ).images[0]
 
     return gen_image
