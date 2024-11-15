@@ -1,0 +1,5 @@
+simple_lama_inpainting
+gradio
+flask
+Pillow
+numpy
