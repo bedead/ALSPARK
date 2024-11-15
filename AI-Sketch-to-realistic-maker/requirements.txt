@@ -1,4 +1,4 @@
-gradio
+gradio==4.38.1
 pillow
 requests
 transformers

@@ -37,7 +37,7 @@ def generate_image():
             threshold=0.65,
         )
     else:
-        prompt = blip_model
+        prompt = blip_prompt
 
     print(f"Selected prompt : {prompt}")
 

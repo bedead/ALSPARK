@@ -1,4 +1,6 @@
 look for better model, specific for realistic images - > done
-seed otimization if possible, some high number - > will do
-adding optinal user promopt - > doing
-prompt context similarity check and furthur process - > will do
+seed otimization if possible, some high number - > done
+adding optinal user promopt - > done
+prompt context similarity check and furthur process -> done
+problem with editing canvas (gradio) -> doing -> either change to html canvas
+imporve image generation quality -> will do
