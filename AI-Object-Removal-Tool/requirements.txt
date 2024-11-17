@@ -9,4 +9,4 @@ mmengine
 opencv-python 
 torch 
 torchvision 
-transformers==4.28.0
+transformers

@@ -7,15 +7,18 @@ from diffusers.utils.loading_utils import load_image
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+model = "andregn/Realistic_Vision_V3.0-inpainting"
+model1 = "Sanster/PowerPaint-V1-stable-diffusion-inpainting"
+
 
 def initialize_model():
     pipe = Pipeline.from_pretrained(
-        "Sanster/PowerPaint-V1-stable-diffusion-inpainting",
+        model1,
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         # use_auth_token=True,
         # revision="fp16",
-        safety_checker=None,
-        variant="fp16",
+        # safety_checker=None,
+        # variant="fp16",
     )
     pipe.tokenizer = PowerPaintTokenizer(pipe.tokenizer)
     pipe = pipe.to(device)

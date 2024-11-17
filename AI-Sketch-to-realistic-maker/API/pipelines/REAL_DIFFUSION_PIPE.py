@@ -5,9 +5,10 @@ from diffusers.pipelines.auto_pipeline import AutoPipelineForImage2Image
 from diffusers.schedulers.scheduling_dpmsolver_multistep import (
     DPMSolverMultistepScheduler,
 )
-from diffusers.pipelines.stable_diffusion.safety_checker import (
-    StableDiffusionSafetyChecker,
-)
+
+# from diffusers.pipelines.stable_diffusion.safety_checker import (
+#     StableDiffusionSafetyChecker,
+# )
 
 from diffusers.models.autoencoders.autoencoder_tiny import AutoencoderTiny
 
@@ -20,7 +21,7 @@ if device == "cuda":
     torch.backends.cuda.matmul.allow_tf32 = True
 
 fixed_negative_prompt = """
-deformed iris, deformed pupils, semi-realistic, cartoon, cgi, render, illustration, painting, drawing, geometric, text, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
+(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, geometric, illustration), text, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
 """
 
 
@@ -34,8 +35,10 @@ def initialize_model():
         # ),
         # safety_checker=None,
     ).to(device)
+    vae1 = "stabilityai/sd-vae-ft-mse-original"
+    vae = "sayakpaul/taesd-diffusers"
     pipe.vae = AutoencoderTiny.from_pretrained(
-        "sayakpaul/taesd-diffusers",
+        vae,
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         use_safetensors=True,
     ).to(device)
@@ -43,7 +46,6 @@ def initialize_model():
     if device == "cuda":
         pipe.enable_model_cpu_offload()
 
-    # Uncomment to use the custom scheduler
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     return pipe
 
@@ -55,9 +57,7 @@ def sketch_to_realistic(
     # seed = 513307103
     print(f"Using seed: {seed}")  # Print the seed for reference
 
-    prompt = (
-        f"Raw photo, {prompt}, photo-realistic photo, natural lighting, high quality"
-    )
+    prompt = f"Raw photo, {prompt}, 8k uhd, dslr, photo-realistic photo, natural lighting, high quality"
     print(f"Prompt : {prompt}")
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -68,6 +68,7 @@ def sketch_to_realistic(
             strength=0.6,
             negative_prompt=fixed_negative_prompt,
             generator=generator,
+            # guidance_scale=7,
             # num_inference_steps=15,
         ).images[0]
 

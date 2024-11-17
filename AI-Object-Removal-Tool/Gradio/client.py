@@ -44,22 +44,23 @@ def clear_image():
 with gr.Blocks() as demo:
     gr.Markdown("# AI Object removal Tool")
     with gr.Row():
-        with gr.Column():
+        with gr.Column(scale=6):
             img = gr.ImageMask(
                 sources=["upload"],
                 layers=False,
                 label="Base Image",
                 show_label=True,
-                height=512,  # Set a fixed height for the displayed image
-                width=512,  # Set a fixed width for the displayed image
-                canvas_size=(512, 512),  # Defines the actual drawing area
-                show_fullscreen_button=True,  # Allows viewing in fullscreen if needed
+                height=700,
+                # height=512,  # Set a fixed height for the displayed image
+                # width=512,  # Set a fixed width for the displayed image
+                # canvas_size=(512, 512),  # Defines the actual drawing area
+                # show_fullscreen_button=True,  # Allows viewing in fullscreen if needed
             )
             with gr.Row():
                 btn = gr.Button("Remove Object", variant="primary")
                 clear = gr.Button("Clear", variant="secondary")
 
-        with gr.Column():
+        with gr.Column(scale=4):
             mask_output = gr.Image(label="Mask Image", show_label=True)
             output_image = gr.Image(label="Inpainted Image", show_label=True)
 
