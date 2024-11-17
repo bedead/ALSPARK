@@ -6,14 +6,12 @@ from model_controller import initialize_model, predict
 
 app = Flask(__name__)
 
-# Initialize the model pipeline
 pipeline = initialize_model()
 
 
 @app.route("/remove_object", methods=["POST"])
 def inpaint():
     try:
-        # Get input files from the request
         image_file = request.files["image"]
         mask_file = request.files["mask"]
 
@@ -30,10 +28,10 @@ def inpaint():
         dict_out, dict_res = predict(
             pipe=pipeline,
             input_image=input_data,
-            prompt="",
+            prompt="empty scene blur",
             fitting_degree=1,
-            ddim_steps=15,
-            scale=12,
+            ddim_steps=50,
+            scale=7.5,
             negative_prompt="",
         )
 

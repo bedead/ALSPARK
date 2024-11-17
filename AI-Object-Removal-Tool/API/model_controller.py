@@ -5,16 +5,17 @@ from pipelines.pipeline_PowerPaint import StableDiffusionInpaintPipeline as Pipe
 from pipelines.power_paint_tokenizer import PowerPaintTokenizer
 from diffusers.utils.loading_utils import load_image
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 
 def initialize_model():
     pipe = Pipeline.from_pretrained(
         "Sanster/PowerPaint-V1-stable-diffusion-inpainting",
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         # use_auth_token=True,
-        revision="fp16" if device == 'cuda' else None,
+        # revision="fp16",
         safety_checker=None,
-        variant="fp16" if device == 'cuda' else None,
+        variant="fp16",
     )
     pipe.tokenizer = PowerPaintTokenizer(pipe.tokenizer)
     pipe = pipe.to(device)
@@ -23,6 +24,7 @@ def initialize_model():
         pipe.enable_model_cpu_offload()
 
     return pipe
+
 
 def add_task_to_prompt(prompt, negative_prompt):
     promptA = prompt + " P_ctxt"
