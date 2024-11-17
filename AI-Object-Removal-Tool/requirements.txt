@@ -1,5 +1,12 @@
-simple_lama_inpainting
 gradio
 flask
 Pillow
 numpy
+accelerate
+controlnet-aux==0.0.3
+diffusers 
+mmengine 
+opencv-python 
+torch 
+torchvision 
+transformers==4.28.0

@@ -68,7 +68,7 @@ def sketch_to_realistic(
             strength=0.6,
             negative_prompt=fixed_negative_prompt,
             generator=generator,
-            num_inference_steps=15,
+            # num_inference_steps=15,
         ).images[0]
 
     return gen_image

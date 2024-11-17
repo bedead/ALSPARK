@@ -61,7 +61,6 @@ with gr.Blocks() as demo:
 
         with gr.Column(scale=4):
             im_preview = gr.Image(interactive=False, label="Preview")
-            im.change(predict, inputs=im, outputs=im_preview, show_progress="hidden")
 
             # with gr.Row():
             prompt = gr.Textbox(
@@ -85,6 +84,7 @@ with gr.Blocks() as demo:
         inputs=None,
         outputs=[im, im_preview, prompt, output_image],
     )
+    im.change(predict, inputs=im, outputs=im_preview, show_progress="hidden")
 
 
 demo.launch(share=True)

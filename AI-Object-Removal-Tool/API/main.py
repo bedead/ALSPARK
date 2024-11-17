@@ -1,30 +1,54 @@
-from flask import Flask, request, jsonify, send_file
-from simple_lama_inpainting import SimpleLama
+from flask import Flask, request, send_file
 from PIL import Image
-import numpy as np
 import io
+import numpy as np
+from model_controller import initialize_model, predict
 
 app = Flask(__name__)
-simple_lama = SimpleLama()
+
+# Initialize the model pipeline
+pipeline = initialize_model()
 
 
 @app.route("/remove_object", methods=["POST"])
 def inpaint():
-    image_file = request.files["image"]
-    mask_file = request.files["mask"]
+    try:
+        # Get input files from the request
+        image_file = request.files["image"]
+        mask_file = request.files["mask"]
 
-    print("Request recieved")
+        print("Request received")
 
-    image = Image.open(image_file).convert("RGB")
-    mask = Image.open(mask_file).convert("L")
+        image = Image.open(image_file).convert("RGB")
+        mask = Image.open(mask_file).convert("RGB")
 
-    result = simple_lama(image, mask)
+        input_data = {
+            "image": image,
+            "mask": mask,
+        }
 
-    result_io = io.BytesIO()
-    result.save(result_io, format="PNG")
-    result_io.seek(0)
-    print(f"Image send")
-    return send_file(result_io, mimetype="image/png")
+        dict_out, dict_res = predict(
+            pipe=pipeline,
+            input_image=input_data,
+            prompt="",
+            fitting_degree=1,
+            ddim_steps=15,
+            scale=12,
+            negative_prompt="",
+        )
+
+        result_image = dict_out[1]
+
+        result_io = io.BytesIO()
+        result_image.save(result_io, format="PNG")
+        result_io.seek(0)
+
+        print("Image sent")
+        return send_file(result_io, mimetype="image/png")
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return {"error": str(e)}, 500
 
 
 if __name__ == "__main__":

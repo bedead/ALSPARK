@@ -42,6 +42,7 @@ def clear_image():
 
 
 with gr.Blocks() as demo:
+    gr.Markdown("# AI Object removal Tool")
     with gr.Row():
         with gr.Column():
             img = gr.ImageMask(
