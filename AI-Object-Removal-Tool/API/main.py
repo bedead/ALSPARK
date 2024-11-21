@@ -28,10 +28,10 @@ def inpaint():
         dict_out, dict_res = predict(
             pipe=pipeline,
             input_image=input_data,
-            prompt="empty scene blur",
+            prompt="",
             fitting_degree=1,
-            ddim_steps=50,
-            scale=7.5,
+            ddim_steps=30,
+            scale=12,
             negative_prompt="",
         )
 

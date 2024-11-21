@@ -1,9 +1,14 @@
 import numpy as np
 import torch
 from PIL import Image, ImageFilter, ImageOps
+from diffusers.utils.loading_utils import load_image
+from transformers import CLIPTextModel, CLIPTokenizer
+from diffusers.schedulers.scheduling_dpmsolver_multistep import (
+    DPMSolverMultistepScheduler,
+)
+
 from pipelines.pipeline_PowerPaint import StableDiffusionInpaintPipeline as Pipeline
 from pipelines.power_paint_tokenizer import PowerPaintTokenizer
-from diffusers.utils.loading_utils import load_image
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -15,25 +20,23 @@ def initialize_model():
     pipe = Pipeline.from_pretrained(
         model1,
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-        # use_auth_token=True,
-        # revision="fp16",
-        # safety_checker=None,
-        # variant="fp16",
+        safety_checker=None,
+        variant="fp16" if device == "cuda" else None,
     )
     pipe.tokenizer = PowerPaintTokenizer(pipe.tokenizer)
-    pipe = pipe.to(device)
-
+    pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     if device == "cuda":
         pipe.enable_model_cpu_offload()
+    pipe = pipe.to(device)
 
     return pipe
 
 
-def add_task_to_prompt(prompt, negative_prompt):
+def add_task_to_prompt(prompt, neg_prompt):
     promptA = prompt + " P_ctxt"
-    promptB = prompt + " P_ctxt"
-    negative_promptA = negative_prompt + " P_obj"
-    negative_promptB = negative_prompt + " P_obj"
+    promptB = prompt + "P_ctxt"
+    negative_promptA = neg_prompt + "P_obj"
+    negative_promptB = neg_prompt + "P_obj"
 
     return promptA, promptB, negative_promptA, negative_promptB
 
