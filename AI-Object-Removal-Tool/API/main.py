@@ -30,7 +30,7 @@ def inpaint():
             input_image=input_data,
             prompt="",
             fitting_degree=1,
-            ddim_steps=30,
+            ddim_steps=50,
             scale=12,
             negative_prompt="",
         )

@@ -27,7 +27,7 @@ def initialize_model():
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     if device == "cuda":
         pipe.enable_model_cpu_offload()
-    pipe = pipe.to(device)
+    # pipe = pipe.to(device)
 
     return pipe
 
