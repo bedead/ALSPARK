@@ -112,6 +112,7 @@ def generate_image():
         cond_weight_style=cond_weight_style,
         cond_weight_canny=cond_weight_canny,
         prompt=prompt,
+        seed=42,
         neg_prompt=neg_prompt,
         scale=scale,
         n_samples=n_samples,

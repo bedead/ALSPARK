@@ -110,6 +110,7 @@ with gr.Blocks() as demo:
                         step=0.05,
                         value=1,
                         interactive=True,
+                        visible=False,
                     )
 
             # Common parameters
@@ -158,7 +159,7 @@ with gr.Blocks() as demo:
                     minimum=0.1,
                     maximum=1.0,
                     step=0.05,
-                    visible=False,
+                    # visible=False,
                 )
 
             with gr.Row():

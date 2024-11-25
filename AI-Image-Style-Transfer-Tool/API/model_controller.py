@@ -2,6 +2,7 @@ import copy
 import random
 import torch
 from torch import autocast
+from PIL import Image
 from pytorch_lightning import seed_everything
 import cv2
 import numpy as np
@@ -102,12 +103,15 @@ class StyleTransferPipeline:
         steps,
         resize_short_edge,
         cond_tau,
+        seed=None,
     ):
         """Main pipeline to generate stylized images."""
         with torch.inference_mode(), self.sd_model.ema_scope(), autocast(self.device):
             # Setup options
             opt = copy.deepcopy(self.global_opt)
-            opt.seed = random.randint(1, 4000000000)  # Random seed
+            opt.seed = (
+                seed if seed != None else random.randint(1, 4000000000)
+            )  # Random seed
             (
                 opt.prompt,
                 opt.neg_prompt,
@@ -169,8 +173,12 @@ class StyleTransferPipeline:
                 )
                 ims.append(tensor2img(result, rgb2bgr=False))
 
+            stylized_image_np = ims[0]  # Get the first generated image as NumPy array
+            stylized_image_pil = Image.fromarray(stylized_image_np.astype("uint8"))
+
+            # Clear GPU memory cache
             torch.cuda.empty_cache()
-            return ims[0]  # Return the first image
+            return stylized_image_pil
 
 
 # Initialize pipeline
