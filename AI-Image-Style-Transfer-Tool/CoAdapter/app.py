@@ -7,6 +7,7 @@ from functools import partial
 from itertools import chain
 from torch import autocast
 from pytorch_lightning import seed_everything
+import random
 
 from basicsr.utils import tensor2img
 from ldm.inference_base import (
@@ -77,7 +78,7 @@ global_opt.cond_weight = 1.0
 global_opt.C = 4
 global_opt.f = 8
 # TODO: expose style_cond_tau to users
-global_opt.style_cond_tau = 1.0
+global_opt.style_cond_tau = 1
 
 # stable-diffusion model
 sd_model, sampler = get_sd_models(global_opt)
@@ -104,7 +105,6 @@ def run(
     neg_prompt,
     scale,
     n_samples,
-    seed,
     steps,
     resize_short_edge,
     cond_tau,
@@ -112,12 +112,12 @@ def run(
     with torch.inference_mode(), sd_model.ema_scope(), autocast(device):
 
         opt = copy.deepcopy(global_opt)
+        opt.seed = random.randint(1, 4000000001)
         (
             opt.prompt,
             opt.neg_prompt,
             opt.scale,
             opt.n_samples,
-            opt.seed,
             opt.steps,
             opt.resize_short_edge,
             opt.cond_tau,
@@ -126,13 +126,10 @@ def run(
             neg_prompt,
             scale,
             n_samples,
-            seed,
             steps,
             resize_short_edge,
             cond_tau,
         )
-
-        print(f"{neg_prompt}")
 
         # Resize the input images to match sizes
         ims1, ims2 = [], []
@@ -215,14 +212,14 @@ def run(
 
         # Clear GPU memory cache
         torch.cuda.empty_cache()
-        return ims
+        return ims[0]
 
 
 # with gr.Blocks(title="CoAdapter", css=".gr-box {border-color: #8136e2}") as demo:
-with gr.Blocks(css="style.css") as demo:
+with gr.Blocks() as demo:
     with gr.Row(equal_height=True):
         with gr.Column(scale=7):
-            output = gr.Gallery(height="auto")
+            output = gr.Image(height="auto")
 
         with gr.Column(scale=3):
             # For "canny"
@@ -241,6 +238,7 @@ with gr.Blocks(css="style.css") as demo:
                     step=0.05,
                     value=1,
                     interactive=True,
+                    visible=False,
                 )
 
             # For "style"
@@ -275,6 +273,7 @@ with gr.Blocks(css="style.css") as demo:
                     minimum=1,
                     maximum=15,
                     step=0.1,
+                    visible=False,
                 )
                 n_samples = gr.Slider(
                     label="Num samples",
@@ -284,16 +283,13 @@ with gr.Blocks(css="style.css") as demo:
                     step=1,
                     visible=False,
                 )
-                seed = gr.Slider(
-                    label="Seed",
-                    value=42,
-                    minimum=0,
-                    maximum=10000,
+                steps = gr.Slider(
+                    label="Steps",
+                    value=35,
+                    minimum=10,
+                    maximum=100,
                     step=1,
                     visible=False,
-                )
-                steps = gr.Slider(
-                    label="Steps", value=50, minimum=10, maximum=100, step=1
                 )
                 resize_short_edge = gr.Slider(
                     label="Image resolution",
@@ -309,6 +305,7 @@ with gr.Blocks(css="style.css") as demo:
                     minimum=0.1,
                     maximum=1.0,
                     step=0.05,
+                    visible=False,
                 )
 
             with gr.Row():
@@ -325,7 +322,6 @@ with gr.Blocks(css="style.css") as demo:
         neg_prompt,
         scale,
         n_samples,
-        seed,
         steps,
         resize_short_edge,
         cond_tau,
