@@ -3,8 +3,6 @@ import argparse
 import copy
 import gradio as gr
 import torch
-from functools import partial
-from itertools import chain
 from torch import autocast
 from pytorch_lightning import seed_everything
 import random

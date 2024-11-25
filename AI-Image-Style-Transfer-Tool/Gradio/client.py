@@ -82,7 +82,7 @@ with gr.Blocks() as demo:
                         label="Image",
                         interactive=True,
                         visible=True,
-                        type="numpy",
+                        type="pil",
                     )
                 cond_weight_canny = gr.Slider(
                     label="Condition weight for Image",
@@ -101,7 +101,7 @@ with gr.Blocks() as demo:
                         label="Style Image",
                         interactive=True,
                         visible=True,
-                        type="numpy",
+                        type="pil",
                     )
                     cond_weight_style = gr.Slider(
                         label="Condition weight for style",
