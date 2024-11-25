@@ -1,12 +1,9 @@
 import numpy as np
 import torch
-from PIL import Image, ImageFilter, ImageOps
-from diffusers.utils.loading_utils import load_image
-from transformers import CLIPTextModel, CLIPTokenizer
 from diffusers.schedulers.scheduling_dpmsolver_multistep import (
     DPMSolverMultistepScheduler,
 )
-
+from PIL import Image, ImageFilter
 from pipelines.pipeline_PowerPaint import StableDiffusionInpaintPipeline as Pipeline
 from pipelines.power_paint_tokenizer import PowerPaintTokenizer
 
@@ -20,7 +17,8 @@ def initialize_model():
     pipe = Pipeline.from_pretrained(
         model1,
         torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-        safety_checker=None,
+        # safety_checker=None,
+        requires_safety_checker=True,
         variant="fp16" if device == "cuda" else None,
     )
     pipe.tokenizer = PowerPaintTokenizer(pipe.tokenizer)
@@ -34,9 +32,9 @@ def initialize_model():
 
 def add_task_to_prompt(prompt, neg_prompt):
     promptA = prompt + " P_ctxt"
-    promptB = prompt + "P_ctxt"
-    negative_promptA = neg_prompt + "P_obj"
-    negative_promptB = neg_prompt + "P_obj"
+    promptB = prompt + " P_ctxt"
+    negative_promptA = neg_prompt + " P_obj"
+    negative_promptB = neg_prompt + " P_obj"
 
     return promptA, promptB, negative_promptA, negative_promptB
 
@@ -50,6 +48,7 @@ def predict(
     ddim_steps,
     scale,
     negative_prompt,
+    strength,
 ):
     width, height = input_image["image"].convert("RGB").size
 
@@ -85,6 +84,7 @@ def predict(
         height=W,
         guidance_scale=scale,
         num_inference_steps=ddim_steps,
+        strength=strength,
     ).images[0]
     mask_np = np.array(input_image["mask"].convert("RGB"))
     red = np.array(result).astype("float") * 1

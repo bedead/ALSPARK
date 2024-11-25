@@ -6,7 +6,7 @@ import io
 import time
 
 
-def process_image(img):
+def process_image(img, prompt):
     if img is None:
         return gr.Warning("No image selected. Please upload an image to proceed.")
 
@@ -28,6 +28,7 @@ def process_image(img):
     response = requests.post(
         "http://127.0.0.1:5000/remove_object",
         files={"image": image_bytes.getvalue(), "mask": mask_bytes.getvalue()},
+        data={"neg_prompt": prompt},
     )
 
     if response.status_code == 200:
@@ -57,6 +58,13 @@ with gr.Blocks() as demo:
                 # show_fullscreen_button=True,  # Allows viewing in fullscreen if needed
             )
             with gr.Row():
+                object_text = gr.Textbox(
+                    label="Object to Remove",
+                    placeholder="e.g., girl, camera, tree, etc.",
+                    lines=1,
+                    show_label=True,
+                )
+            with gr.Row():
                 btn = gr.Button("Remove Object", variant="primary")
                 clear = gr.Button("Clear", variant="secondary")
 
@@ -66,7 +74,7 @@ with gr.Blocks() as demo:
 
     btn.click(
         fn=process_image,
-        inputs=img,
+        inputs=[img, object_text],
         outputs=[output_image, img, mask_output],
     )
 

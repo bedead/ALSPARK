@@ -14,6 +14,7 @@ def inpaint():
     try:
         image_file = request.files["image"]
         mask_file = request.files["mask"]
+        neg_prompt = request.form.get("neg_prompt", "")
 
         print("Request received")
 
@@ -30,9 +31,10 @@ def inpaint():
             input_image=input_data,
             prompt="",
             fitting_degree=1,
-            ddim_steps=50,
-            scale=12,
-            negative_prompt="",
+            ddim_steps=25,
+            scale=7.5,
+            negative_prompt=neg_prompt,
+            strength=1,
         )
 
         result_image = dict_out[1]
