@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 
-API_URL = "http://127.0.0.1:5000/generate"
+API_URL = "http://127.0.0.1:5014/generate"
 
 
 def generate_realistic_image(image, prompt):
