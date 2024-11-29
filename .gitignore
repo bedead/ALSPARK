@@ -2,15 +2,15 @@
 .idea
 .vscode
 
-AI-3D-Model-Maker/Gradio/.gradio
-AI-Image-Style-Transfer-Tool/Gradio/.gradio
-AI-Sketch-to-realistic-maker/Gradio/.gradio
-AI-Photo-to-Cartoon/Gradio/.gradio
-AI-Video-Upscaling/Gradio/.gradio
+Satyam_Mishra/AI-3D-Model-Maker/Gradio/.gradio
+Satyam_Mishra/AI-Image-Style-Transfer-Tool/Gradio/.gradio
+Satyam_Mishra/AI-Sketch-to-realistic-maker/Gradio/.gradio
+Satyam_Mishra/AI-Photo-to-Cartoon/Gradio/.gradio
+Satyam_Mishra/AI-Video-Upscaling/Gradio/.gradio
 
-AI-3D-Model-Maker/API/Old
-AI-3D-Model-Maker/API/static
+Satyam_Mishra/AI-3D-Model-Maker/API/Old
+Satyam_Mishra/AI-3D-Model-Maker/API/static
 .u2net
-AI-3D-Model-Maker/API/Old
-todo.txt
-AI-Image-Style-Transfer-Tool/API/models
+Satyam_Mishra/AI-3D-Model-Maker/API/Old
+Satyam_Mishra/todo.txt
+Satyam_Mishra/AI-Image-Style-Transfer-Tool/API/models
