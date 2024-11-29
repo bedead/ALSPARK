@@ -1,0 +1,6 @@
+torch
+flask
+numpy
+pillow
+diffusers
+accelerate
