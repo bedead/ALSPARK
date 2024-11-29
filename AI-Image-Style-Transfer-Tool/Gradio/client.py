@@ -159,7 +159,7 @@ with gr.Blocks() as demo:
                     minimum=0.1,
                     maximum=1.0,
                     step=0.05,
-                    # visible=False,
+                    visible=False,
                 )
 
             with gr.Row():

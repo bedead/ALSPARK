@@ -78,7 +78,7 @@ def generate_image():
     neg_prompt = request.form.get("neg_prompt")
     scale = float(request.form.get("scale", 7.5))
     n_samples = int(request.form.get("n_samples", 1))
-    steps = int(request.form.get("steps", 35))
+    steps = int(request.form.get("steps", 40))
     resize_short_edge = int(request.form.get("resize_short_edge", 512))
     cond_tau = float(request.form.get("cond_tau", 1.0))
     cond_weight_style = float(request.form.get("cond_weight_style", 1.0))
