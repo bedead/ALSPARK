@@ -6,7 +6,7 @@ import io
 import time
 
 
-def process_image(img, prompt):
+def process_image(img, neg_prompt, prompt):
     if img is None:
         return gr.Warning("No image selected. Please upload an image to proceed.")
 
@@ -26,9 +26,9 @@ def process_image(img, prompt):
     mask_image.save(mask_bytes, format="PNG")
 
     response = requests.post(
-        "http://127.0.0.1:5000/remove_object",
+        "https://94ba-34-168-169-92.ngrok-free.app/remove_object",
         files={"image": image_bytes.getvalue(), "mask": mask_bytes.getvalue()},
-        data={"neg_prompt": prompt},
+        data={"neg_prompt": neg_prompt, "prompt": prompt},
     )
 
     if response.status_code == 200:
@@ -58,12 +58,19 @@ with gr.Blocks() as demo:
                 # show_fullscreen_button=True,  # Allows viewing in fullscreen if needed
             )
             with gr.Row():
+                back_text = gr.Textbox(
+                    label="What to fill in background?",
+                    placeholder="e.g., public bench, forest grass, blue sky",
+                    lines=1,
+                    show_label=True,
+                )
                 object_text = gr.Textbox(
                     label="Object to Remove",
                     placeholder="e.g., girl, camera, tree, etc.",
                     lines=1,
                     show_label=True,
                 )
+
             with gr.Row():
                 btn = gr.Button("Remove Object", variant="primary")
                 clear = gr.Button("Clear", variant="secondary")
@@ -74,7 +81,7 @@ with gr.Blocks() as demo:
 
     btn.click(
         fn=process_image,
-        inputs=[img, object_text],
+        inputs=[img, object_text, back_text],
         outputs=[output_image, img, mask_output],
     )
 
